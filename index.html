@@ -119,6 +119,69 @@
     function iniciarVibracion() {
       try {
         var modo = document.getElementById("modo").value;
+        resetInterno(); // Limpiar cualquier vibración previa
+      
+        var isPC = !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      
+        if (!navigator.vibrate) {
+          logError("❌ Este navegador no soporta la API de vibración.");
+          return;
+        }
+       
+        if (modo === "manual") {
+          // Simulación de 10 segundos de vibración con intervalos
+          let tiempoTotal = 10000;
+          let paso = 500; // vibrar por 500 ms cada vez
+          let acumulado = 0;
+          encenderLuz();
+          secuenciaIntervalo = setInterval(() => {
+            if (acumulado >= tiempoTotal) {
+              clearInterval(secuenciaIntervalo);
+              secuenciaIntervalo = null;
+              apagarLuz();
+            } else {
+              navigator.vibrate(paso);
+              acumulado += paso;
+            }
+          }, paso);
+        } else if (modo === "temporizado") {
+          // Simulación de 5 segundos de vibración con intervalos
+          let tiempoTotal = 5000;
+          let paso = 500;
+          let acumulado = 0;
+          encenderLuz();
+          secuenciaIntervalo = setInterval(() => {
+            if (acumulado >= tiempoTotal) {
+              clearInterval(secuenciaIntervalo);
+              secuenciaIntervalo = null;
+              apagarLuz();
+            } else {
+              navigator.vibrate(paso);
+              acumulado += paso;
+            }
+          }, paso);
+        } else if (modo === "secuencia") {
+          // Vibrar 2s, parar 2s, repetir
+          secuenciaIntervalo = setInterval(function () {
+            navigator.vibrate([2000, 2000]);
+            encenderLuz();
+            setTimeout(apagarLuz, 2000);
+          }, 4000);
+          navigator.vibrate([2000, 2000]);
+          encenderLuz();
+          setTimeout(apagarLuz, 2000);
+        }
+      } catch (error) {
+        logError("⚠️ Error al iniciar: " + error.message);
+      }
+    }
+
+
+
+    /*
+    function iniciarVibracion() {
+      try {
+        var modo = document.getElementById("modo").value;
         resetInterno(); // reset sin mensajes
       
         var isPC = !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -149,7 +212,7 @@
       } catch (error) {
         logError("⚠️ Error al iniciar: " + error.message);
       }
-    }
+    }*/
 
     function finalizarVibracion() {
       try {
