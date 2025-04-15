@@ -133,6 +133,43 @@
 
     function finalizarVibracion() {
     try {
+        if (secuenciaIntervalo) {
+          clearInterval(secuenciaIntervalo);
+          secuenciaIntervalo = null;
+        }
+      
+        var isPC = !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      
+        if (navigator.vibrate) {
+          navigator.vibrate(0);
+        }
+      
+        apagarLuz();
+      
+        if (isPC) {
+          logError("❌ Este dispositivo no tiene vibrador (posiblemente es un PC o portátil).");
+          return;
+        }
+      
+        // Verificación después de 200 ms solo si no es PC
+        setTimeout(function () {
+          if (navigator.vibrate) {
+            navigator.vibrate(1);
+            setTimeout(function () {
+              navigator.vibrate(0);
+            }, 1);
+          }
+        
+          logError("✔️ Finalizar solicitado. Si el dispositivo sigue vibrando, puede ser un retraso del sistema.");
+        }, 200);
+      } catch (error) {
+        logError("⚠️ Error al finalizar: " + error.message);
+      }
+    }
+
+
+    /*function finalizarVibracion() {
+    try {
        if (secuenciaIntervalo) {
          clearInterval(secuenciaIntervalo);
          secuenciaIntervalo = null;
@@ -159,7 +196,8 @@
      } catch (error) {
        logError("⚠️ Error al finalizar: " + error.message);
      }
-    }   
+    }
+     */   
 
 
     /*function finalizarVibracion() {
