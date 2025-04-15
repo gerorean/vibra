@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controlador de Vibración</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f4f4f4;
+    }
+    .container {
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    #console {
+      background: #000;
+      color: #0f0;
+      font-family: monospace;
+      padding: 10px;
+      height: 100px;
+      overflow-y: auto;
+      border-radius: 5px;
+    }
+    #indicator {
+      width: 100%;
+      height: 100px;
+      background-color: black;
+      margin: 20px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 5px;
+      color: white;
+      font-size: 2em;
+      font-weight: bold;
+    }
+    .light {
+      width: 40px;
+      height: 40px;
+      background-color: white;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Controlador de Vibración</h2>
+    <label for="modo">Modo de vibración:</label>
+    <select id="modo" onchange="resetVibrador()">
+      <option value="manual">Manual</option>
+      <option value="temporizado">Temporizado</option>
+      <option value="secuencia">Secuencia</option>
+    </select>
+
+    <button onclick="iniciarVibracion()">Iniciar</button>
+    <button onclick="finalizarVibracion()">Finalizar</button>
+
+    <div id="indicator"></div>
+
+    <h3>Consola de errores</h3>
+    <div id="console"></div>
+  </div>
+
+  <script>
+    let secuenciaIntervalo = null;
+
+    function logError(msg) {
+      const consola = document.getElementById("console");
+      const linea = document.createElement("div");
+      linea.textContent = msg;
+      consola.appendChild(linea);
+      consola.scrollTop = consola.scrollHeight;
+    }
+
+    function encenderLuz() {
+      const indicator = document.getElementById("indicator");
+      indicator.innerHTML = '<div class="light"></div>';
+    }
+
+    function apagarLuz() {
+      const indicator = document.getElementById("indicator");
+      indicator.innerHTML = '';
+    }
+
+    function mostrarReset() {
+      const indicator = document.getElementById("indicator");
+      indicator.textContent = 'R';
+    }
+
+    function iniciarVibracion() {
+      try {
+        const modo = document.getElementById("modo").value;
+        finalizarVibracion(); // reinicia cualquier vibración anterior
+
+        if (!("vibrate" in navigator)) {
+          throw new Error("La API de vibración no está disponible en este dispositivo.");
+        }
+
+        if (modo === "manual") {
+          navigator.vibrate(30000);
+          encenderLuz();
+          setTimeout(apagarLuz, 30000);
+        } else if (modo === "temporizado") {
+          navigator.vibrate(5000);
+          encenderLuz();
+          setTimeout(apagarLuz, 5000);
+        } else if (modo === "secuencia") {
+          secuenciaIntervalo = setInterval(() => {
+            navigator.vibrate([2000, 2000]);
+            encenderLuz();
+            setTimeout(apagarLuz, 2000);
+          }, 4000);
+          navigator.vibrate([2000, 2000]);
+          encenderLuz();
+          setTimeout(apagarLuz, 2000);
+        }
+      } catch (error) {
+        logError(error.message);
+      }
+    }
+
+    function finalizarVibracion() {
+      try {
+        if (secuenciaIntervalo) {
+          clearInterval(secuenciaIntervalo);
+          secuenciaIntervalo = null;
+        }
+        navigator.vibrate(0); // detener vibración
+        apagarLuz();
+      } catch (error) {
+        logError(error.message);
+      }
+    }
+
+    function resetVibrador() {
+      try {
+        finalizarVibracion();
+        mostrarReset();
+      } catch (error) {
+        logError(error.message);
+      }
+    }
+  </script>
+</body>
+</html>
