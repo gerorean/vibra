@@ -116,78 +116,7 @@
       apagarLuz();
     }
 
-    /*//nada aun no funciona
     function iniciarVibracion() {
-      try {
-        var modo = document.getElementById("modo").value;
-        resetInterno(); // Limpiar cualquier vibración previa
-      
-        if (!navigator.vibrate) {
-          logError("❌ Este navegador no soporta la API de vibración.");
-          return;
-        }
-      
-        let isOldBrowser = /Chrome\/([0-4][0-9]|3[0-9])/.test(navigator.userAgent);
-      
-        if (modo === "manual") {
-          if (isOldBrowser) {
-            navigator.vibrate(10000);
-            encenderLuz();
-            setTimeout(apagarLuz, 10000);
-          } else {
-            let tiempoTotal = 10000;
-            let paso = 500;
-            let acumulado = 0;
-            encenderLuz();
-            secuenciaIntervalo = setInterval(() => {
-              if (acumulado >= tiempoTotal) {
-                clearInterval(secuenciaIntervalo);
-                secuenciaIntervalo = null;
-                apagarLuz();
-              } else {
-                navigator.vibrate(paso);
-                acumulado += paso;
-              }
-            }, paso);
-          }
-        } else if (modo === "temporizado") {
-          if (isOldBrowser) {
-            navigator.vibrate(5000);
-            encenderLuz();
-            setTimeout(apagarLuz, 5000);
-          } else {
-            let tiempoTotal = 5000;
-            let paso = 500;
-            let acumulado = 0;
-            encenderLuz();
-            secuenciaIntervalo = setInterval(() => {
-              if (acumulado >= tiempoTotal) {
-                clearInterval(secuenciaIntervalo);
-                secuenciaIntervalo = null;
-                apagarLuz();
-              } else {
-                navigator.vibrate(paso);
-                acumulado += paso;
-              }
-            }, paso);
-          }
-        } else if (modo === "secuencia") {
-          secuenciaIntervalo = setInterval(function () {
-            navigator.vibrate([2000, 2000]);
-            encenderLuz();
-            setTimeout(apagarLuz, 2000);
-          }, 4000);
-          navigator.vibrate([2000, 2000]);
-          encenderLuz();
-          setTimeout(apagarLuz, 2000);
-        }
-      } catch (error) {
-        logError("⚠️ Error al iniciar: " + error.message);
-      }
-    }*/
-
-
-    /*function iniciarVibracion() {//fallo en el huawei viejito
       try {
         var modo = document.getElementById("modo").value;
         resetInterno(); // Limpiar cualquier vibración previa
@@ -246,11 +175,10 @@
         logError("⚠️ Error al iniciar: " + error.message);
       }
     }
-    */
 
 
 
-    /**/
+    /*
     function iniciarVibracion() {
       try {
         var modo = document.getElementById("modo").value;
@@ -284,7 +212,7 @@
       } catch (error) {
         logError("⚠️ Error al iniciar: " + error.message);
       }
-    }/*/
+    }*/
 
     function finalizarVibracion() {
       try {
