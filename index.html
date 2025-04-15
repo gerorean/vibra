@@ -70,6 +70,8 @@
 
     <h3>Consola de errores</h3>
     <div id="console"></div>
+    <button onclick="limpiarConsola()">Limpiar consola</button>
+
   </div>
 
   <script>
@@ -230,6 +232,12 @@
         logError("❌ Este navegador no tiene soporte para navigator.vibrate");
       }
     };
+
+    function limpiarConsola() {
+    var consola = document.getElementById("console");
+    consola.innerHTML = '';
+    }
+
   </script>
 </body>
 </html>
