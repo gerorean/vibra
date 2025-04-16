@@ -1,183 +1,317 @@
-<!--DOCTYPE html>
-<html>
+<!DOCTYPE html>
+<html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Control de Vibración</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controlador de Vibración</title>
   <style>
     body {
-      background-color: #222;
-      color: white;
-      font-family: sans-serif;
-      text-align: center;
+      font-family: Arial, sans-serif;
       padding: 20px;
+      background: #f4f4f4;
     }
-    #faro {
-      width: 150px;
-      height: 150px;
-      margin: 20px auto;
+    .container {
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    #console {
+      background: #000;
+      color: #0f0;
+      font-family: monospace;
+      padding: 10px;
+      height: 100px;
+      overflow-y: auto;
+      border-radius: 5px;
+    }
+    #indicator {
+      width: 100%;
+      height: 100px;
       background-color: black;
+      margin: 20px 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 72px;
+      border-radius: 5px;
+      color: white;
+      font-size: 2em;
       font-weight: bold;
     }
-    #faro.activo::before {
-      content: "";
-      width: 100px;
-      height: 100px;
+    .light {
+      width: 40px;
+      height: 40px;
       background-color: white;
       border-radius: 50%;
-      display: block;
     }
-    #faro.reset::before {
-      content: "R";
-      color: white;
-      font-size: 72px;
-    }
-    #consola {
-      background-color: #333;
+    button.clean {
+      width: 100%;
       padding: 10px;
-      margin-top: 20px;
-      height: 150px;
-      overflow-y: scroll;
-      border: 1px solid #555;
-      text-align: left;
-    }
-    select, button {
-      font-size: 18px;
-      padding: 10px;
-      margin: 10px;
-    }
-    #limpiarBtn {
-      background-color: #555;
-      color: white;
-      border: none;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <h1>Control de Vibración</h1>
+  <div class="container">
+    <h2>Controlador de Vibración</h2>
+    <label for="modo">Modo de vibración:</label>
+    <select id="modo" onchange="resetVibrador()">
+      <option value="manual">Manual</option>
+      <option value="temporizado">Temporizado</option>
+      <option value="secuencia">Secuencia</option>
+    </select>
 
-  <select id="modo" onchange="resetInterno(); mostrarReset();">
-    <option value="manual">Manual (20s)</option>
-    <option value="temporizado">Temporizado (5s)</option>
-    <option value="secuencia">Secuencia (2s On/Off)</option>
-  </select>
-  <br>
-  <button onclick="iniciarVibracion()">Iniciar</button>
-  <button onclick="finalizarVibracion()">Finalizar</button>
+    <button onclick="iniciarVibracion()">Iniciar</button>
+    <button onclick="finalizarVibracion()">Finalizar</button>
 
-  <div id="faro"></div>
+    <div id="indicator"></div>
 
-  <div id="consola"></div>
-  <button id="limpiarBtn" onclick="limpiarConsola()">Limpiar</button>
+    <h3>Consola de errores</h3>
+    <div id="console"></div>
+    <button onclick="limpiarConsola()" class="clean">Limpiar consola</button>
+  </div>
 
   <script>
     var secuenciaIntervalo = null;
 
     function logError(msg) {
-      var consola = document.getElementById("consola");
-      if (consola) {
-        var p = document.createElement("p");
-        p.textContent = msg;
-        consola.appendChild(p);
-        consola.scrollTop = consola.scrollHeight;
-      }
-      alert(msg); // Mostrar en pantalla
+      var consola = document.getElementById("console");
+      var linea = document.createElement("div");
+      linea.textContent = msg;
+      consola.appendChild(linea);
+      consola.scrollTop = consola.scrollHeight;
     }
 
     function encenderLuz() {
-      var faro = document.getElementById("faro");
-      faro.classList.remove("reset");
-      faro.classList.add("activo");
+      var indicator = document.getElementById("indicator");
+      indicator.innerHTML = '<div class="light"></div>';
     }
 
     function apagarLuz() {
-      var faro = document.getElementById("faro");
-      faro.classList.remove("activo", "reset");
+      var indicator = document.getElementById("indicator");
+      indicator.innerHTML = '';
     }
 
     function mostrarReset() {
-      var faro = document.getElementById("faro");
-      faro.classList.remove("activo");
-      faro.classList.add("reset");
+      var indicator = document.getElementById("indicator");
+      indicator.innerHTML = 'R';
     }
 
+    //2:
     function resetInterno() {
-      try {
-        if (secuenciaIntervalo) {
-          clearInterval(secuenciaIntervalo);
-          secuenciaIntervalo = null;
-        }
-        navigator.vibrate(0);
-        apagarLuz();
-      } catch (e) {
-        logError("❌ Error en resetInterno: " + e.message);
+      if (secuenciaIntervalo) {
+        clearInterval(secuenciaIntervalo);
+        secuenciaIntervalo = null;
       }
+      if (navigator.vibrate) {
+        navigator.vibrate(0);
+      }
+      apagarLuz();
     }
-
+    
     function iniciarVibracion() {
-      alert("✅ iniciarVibracion() llamada");
       try {
         var modo = document.getElementById("modo").value;
-        resetInterno();
-
+        resetInterno(); // reset sin mensajes
+      
+        var isPC = !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      
         if (!navigator.vibrate) {
-          logError("❌ Este navegador no soporta vibración.");
+          logError("❌ Este navegador no soporta la API de vibración.");
           return;
         }
-
+      
         if (modo === "manual") {
-          navigator.vibrate(20000);
+          navigator.vibrate(10000);
           encenderLuz();
-          setTimeout(apagarLuz, 20000);
-          logError("✅ Vibración manual de 20s iniciada");
-
+          setTimeout(apagarLuz, 10000);
         } else if (modo === "temporizado") {
           navigator.vibrate(5000);
           encenderLuz();
           setTimeout(apagarLuz, 5000);
-          logError("✅ Vibración temporizada de 5s iniciada");
-
         } else if (modo === "secuencia") {
-          encenderLuz();
           secuenciaIntervalo = setInterval(function () {
             navigator.vibrate([2000, 2000]);
             encenderLuz();
             setTimeout(apagarLuz, 2000);
           }, 4000);
-          logError("✅ Secuencia de vibración iniciada");
+          navigator.vibrate([2000, 2000]);
+          encenderLuz();
+          setTimeout(apagarLuz, 2000);
         }
-      } catch (e) {
-        logError("❌ Error al iniciar vibración: " + e.message);
+      } catch (error) {
+        logError("⚠️ Error al iniciar: " + error.message);
       }
     }
-
+    
     function finalizarVibracion() {
-      alert("✅ finalizarVibracion() llamada");
       try {
         resetInterno();
-        logError("✔️ Finalizar solicitado. Si el dispositivo sigue vibrando, puede ser un retraso del sistema.");
-      } catch (e) {
-        logError("❌ Error al finalizar: " + e.message);
+      
+        var isPC = !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        if (isPC) {
+          logError("❌ Este dispositivo no tiene vibrador (posiblemente es un PC o portátil).");
+          return;
+        }
+      
+        setTimeout(function () {
+          if (navigator.vibrate) {
+            navigator.vibrate(1);
+            setTimeout(function () {
+              navigator.vibrate(0);
+            }, 1);
+          }
+          logError("✔️ Finalizar solicitado. Si el dispositivo sigue vibrando, puede ser un retraso del sistema.");
+        }, 200);
+      } catch (error) {
+        logError("⚠️ Error al finalizar: " + error.message);
+      }
+    }
+    
+    function resetVibrador() {
+      try {
+        resetInterno(); // sin mensajes
+        mostrarReset();
+      } catch (error) {
+        logError("⚠️ Error al hacer reset: " + error.message);
       }
     }
 
-    function limpiarConsola() {
-      var consola = document.getElementById("consola");
-      consola.innerHTML = "";
-    }
+
+//2    function iniciarVibracion() {
+//2      try {
+//2        var modo = document.getElementById("modo").value;
+//2        finalizarVibracion();
+//2
+//2        if (!navigator.vibrate) {
+//2          logError("❌ Este navegador no soporta la API de vibración.");
+//2          return;
+//2        }
+//2
+//2        if (modo === "manual") {
+//2          navigator.vibrate(10000);
+//2          encenderLuz();
+//2          setTimeout(apagarLuz, 10000);
+//2        } else if (modo === "temporizado") {
+//2          navigator.vibrate(5000);
+//2          encenderLuz();
+//2          setTimeout(apagarLuz, 5000);
+//2        } else if (modo === "secuencia") {
+//2          secuenciaIntervalo = setInterval(function() {
+//2            navigator.vibrate([2000, 2000]);
+//2            encenderLuz();
+//2            setTimeout(apagarLuz, 2000);
+//2          }, 4000);
+//2          navigator.vibrate([2000, 2000]);
+//2          encenderLuz();
+//2          setTimeout(apagarLuz, 2000);
+//2        }
+//2      } catch (error) {
+//2        logError("⚠️ Error al iniciar: " + error.message);
+//2      }
+//2    }
+//2
+//2    //1
+//2    function finalizarVibracion() {
+//2      try {
+//2        if (secuenciaIntervalo) {
+//2          clearInterval(secuenciaIntervalo);
+//2          secuenciaIntervalo = null;
+//2        }
+//2      
+//2        var isPC = !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+//2      
+//2        if (navigator.vibrate) {
+//2          navigator.vibrate(0);
+//2        }
+//2      
+//2        apagarLuz();
+//2      
+//2        if (isPC) {
+//2          logError("❌ Este dispositivo no tiene vibrador (posiblemente es un PC o portátil).");
+//2          return;
+//2        }
+//2      
+//2        // Verificación después de 200 ms solo si no es PC
+//2        setTimeout(function () {
+//2          if (navigator.vibrate) {
+//2            navigator.vibrate(1);
+//2            setTimeout(function () {
+//2              navigator.vibrate(0);
+//2            }, 1);
+//2          }
+//2        
+//2          logError("✔️ Finalizar solicitado. Si el dispositivo sigue vibrando, puede ser un retraso del sistema.");
+//2        }, 200);
+//2      } catch (error) {
+//2        logError("⚠️ Error al finalizar: " + error.message);
+//2      }
+//2    }
+
+//1    function finalizarVibracion() {
+//1      try {
+//1        if (secuenciaIntervalo) {
+//1          clearInterval(secuenciaIntervalo);
+//1          secuenciaIntervalo = null;
+//1        }
+//1        if (navigator.vibrate) {
+//1          navigator.vibrate(0);
+//1        }
+//1        apagarLuz();
+//1      } catch (error) {
+//1        logError("⚠️ Error al finalizar: " + error.message);
+//1      }
+//1    }
+
+//2    function resetVibrador() {
+//2      try {
+//2        finalizarVibracion();
+//2        mostrarReset();
+//2      } catch (error) {
+//2        logError("⚠️ Error al hacer reset: " + error.message);
+//2      }
+//2    }
+
+    // Detectar soporte de vibración al cargar
+    window.onload = function() {
+      if (!navigator.vibrate) {
+        logError("❌ Este navegador no tiene soporte para navigator.vibrate");
+      }
+    };
   </script>
 </body>
-</html-->
+</html>
 
 
 
 
 
 
-<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -417,7 +551,6 @@
       }
     }
 
-    /*
     function resetVibrador() {
       try {
         resetInterno(); // sin mensajes
@@ -425,7 +558,7 @@
       } catch (error) {
         logError("⚠️ Error al hacer reset: " + error.message);
       }
-    }*/
+    }
 
 
     /*
