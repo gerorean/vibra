@@ -115,7 +115,7 @@
       }
       apagarLuz();
     }
-    
+
     function iniciarVibracion() {
       try {
         var modo = document.getElementById("modo").value;
@@ -150,7 +150,7 @@
         logError("⚠️ Error al iniciar: " + error.message);
       }
     }
-    
+
     function finalizarVibracion() {
       try {
         resetInterno();
@@ -174,7 +174,7 @@
         logError("⚠️ Error al finalizar: " + error.message);
       }
     }
-    
+
     function resetVibrador() {
       try {
         resetInterno(); // sin mensajes
@@ -285,6 +285,12 @@
         logError("❌ Este navegador no tiene soporte para navigator.vibrate");
       }
     };
+
+    function limpiarConsola() {
+      var consola = document.getElementById("console");
+      consola.innerHTML = '';
+    }
+
   </script>
 </body>
 </html>
