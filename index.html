@@ -1,4 +1,183 @@
 <!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Control de Vibración</title>
+  <style>
+    body {
+      background-color: #222;
+      color: white;
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    #faro {
+      width: 150px;
+      height: 150px;
+      margin: 20px auto;
+      background-color: black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 72px;
+      font-weight: bold;
+    }
+    #faro.activo::before {
+      content: "";
+      width: 100px;
+      height: 100px;
+      background-color: white;
+      border-radius: 50%;
+      display: block;
+    }
+    #faro.reset::before {
+      content: "R";
+      color: white;
+      font-size: 72px;
+    }
+    #consola {
+      background-color: #333;
+      padding: 10px;
+      margin-top: 20px;
+      height: 150px;
+      overflow-y: scroll;
+      border: 1px solid #555;
+      text-align: left;
+    }
+    select, button {
+      font-size: 18px;
+      padding: 10px;
+      margin: 10px;
+    }
+    #limpiarBtn {
+      background-color: #555;
+      color: white;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Control de Vibración</h1>
+
+  <select id="modo" onchange="resetInterno(); mostrarReset();">
+    <option value="manual">Manual (20s)</option>
+    <option value="temporizado">Temporizado (5s)</option>
+    <option value="secuencia">Secuencia (2s On/Off)</option>
+  </select>
+  <br>
+  <button onclick="iniciarVibracion()">Iniciar</button>
+  <button onclick="finalizarVibracion()">Finalizar</button>
+
+  <div id="faro"></div>
+
+  <div id="consola"></div>
+  <button id="limpiarBtn" onclick="limpiarConsola()">Limpiar</button>
+
+  <script>
+    var secuenciaIntervalo = null;
+
+    function logError(msg) {
+      var consola = document.getElementById("consola");
+      if (consola) {
+        var p = document.createElement("p");
+        p.textContent = msg;
+        consola.appendChild(p);
+        consola.scrollTop = consola.scrollHeight;
+      }
+      alert(msg); // Mostrar en pantalla
+    }
+
+    function encenderLuz() {
+      var faro = document.getElementById("faro");
+      faro.classList.remove("reset");
+      faro.classList.add("activo");
+    }
+
+    function apagarLuz() {
+      var faro = document.getElementById("faro");
+      faro.classList.remove("activo", "reset");
+    }
+
+    function mostrarReset() {
+      var faro = document.getElementById("faro");
+      faro.classList.remove("activo");
+      faro.classList.add("reset");
+    }
+
+    function resetInterno() {
+      try {
+        if (secuenciaIntervalo) {
+          clearInterval(secuenciaIntervalo);
+          secuenciaIntervalo = null;
+        }
+        navigator.vibrate(0);
+        apagarLuz();
+      } catch (e) {
+        logError("❌ Error en resetInterno: " + e.message);
+      }
+    }
+
+    function iniciarVibracion() {
+      alert("✅ iniciarVibracion() llamada");
+      try {
+        var modo = document.getElementById("modo").value;
+        resetInterno();
+
+        if (!navigator.vibrate) {
+          logError("❌ Este navegador no soporta vibración.");
+          return;
+        }
+
+        if (modo === "manual") {
+          navigator.vibrate(20000);
+          encenderLuz();
+          setTimeout(apagarLuz, 20000);
+          logError("✅ Vibración manual de 20s iniciada");
+
+        } else if (modo === "temporizado") {
+          navigator.vibrate(5000);
+          encenderLuz();
+          setTimeout(apagarLuz, 5000);
+          logError("✅ Vibración temporizada de 5s iniciada");
+
+        } else if (modo === "secuencia") {
+          encenderLuz();
+          secuenciaIntervalo = setInterval(function () {
+            navigator.vibrate([2000, 2000]);
+            encenderLuz();
+            setTimeout(apagarLuz, 2000);
+          }, 4000);
+          logError("✅ Secuencia de vibración iniciada");
+        }
+      } catch (e) {
+        logError("❌ Error al iniciar vibración: " + e.message);
+      }
+    }
+
+    function finalizarVibracion() {
+      alert("✅ finalizarVibracion() llamada");
+      try {
+        resetInterno();
+        logError("✔️ Finalizar solicitado. Si el dispositivo sigue vibrando, puede ser un retraso del sistema.");
+      } catch (e) {
+        logError("❌ Error al finalizar: " + e.message);
+      }
+    }
+
+    function limpiarConsola() {
+      var consola = document.getElementById("consola");
+      consola.innerHTML = "";
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+<!--DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -389,7 +568,7 @@
 
   </script>
 </body>
-</html>
+</html-->
 
 
 
