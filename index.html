@@ -2,6 +2,37 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <title>Prueba Vibración</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; margin-top: 100px; }
+    button { font-size: 20px; padding: 20px; }
+  </style>
+</head>
+<body>
+  <h2>🧪 Prueba de Vibración</h2>
+  <button onclick="probarVibracion()">Vibrar 5 veces</button>
+
+  <script>
+    function probarVibracion() {
+      if ('vibrate' in navigator) {
+        const resultado = navigator.vibrate([1000, 1000, 1000, 1000, 1000]);
+        alert("navigator.vibrate devuelto: " + resultado);
+      } else {
+        alert("Tu dispositivo no soporta vibración 😢");
+      }
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+
+<!--DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prueba de Vibración</title>
   <style>
@@ -70,7 +101,7 @@
     }
   </script>
 </body>
-</html>
+</html-->
 
 
 
