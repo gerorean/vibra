@@ -235,6 +235,7 @@
     }
 
 
+/* 4a * /
 //3 prueba con pasos de 500 milisegundos
     function iniciarVibracion() {
         try {
@@ -297,45 +298,46 @@
           logError("⚠️ Error al iniciar: " + error.message);
         }
       }
+/* 4b */
 
-
-
+/* 3a */
 //3    
-//    function iniciarVibracion() {
-//      try {
-//        var modo = document.getElementById("modo").value;
-//        resetInterno(); // reset sin mensajes
-//      
-//        var isPC = !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-//      
-//        if (!navigator.vibrate) {
-//          logError("❌ Este navegador no soporta la API de vibración.");
-//          return;
-//        }
-//      
-//        if (modo === "manual") {
-//          // Simulación de 10 segundos de vibración con intervalos
-//          navigator.vibrate(10000);
-//          encenderLuz();
-//          setTimeout(apagarLuz, 10000);
-//        } else if (modo === "temporizado") {
-//          navigator.vibrate(5000);
-//          encenderLuz();
-//          setTimeout(apagarLuz, 5000);
-//        } else if (modo === "secuencia") {
-//          secuenciaIntervalo = setInterval(function () {
-//            navigator.vibrate([2000, 2000]);
-//            encenderLuz();
-//            setTimeout(apagarLuz, 2000);
-//          }, 4000);
-//          navigator.vibrate([2000, 2000]);
-//          encenderLuz();
-//          setTimeout(apagarLuz, 2000);
-//        }
-//      } catch (error) {
-//        logError("⚠️ Error al iniciar: " + error.message);
-//      }
-//    }
+    function iniciarVibracion() {
+      try {
+        var modo = document.getElementById("modo").value;
+        resetInterno(); // reset sin mensajes
+      
+        var isPC = !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      
+        if (!navigator.vibrate) {
+          logError("❌ Este navegador no soporta la API de vibración.");
+          return;
+        }
+      
+        if (modo === "manual") {
+          // Simulación de 10 segundos de vibración con intervalos
+          navigator.vibrate(10000);
+          encenderLuz();
+          setTimeout(apagarLuz, 10000);
+        } else if (modo === "temporizado") {
+          navigator.vibrate(5000);
+          encenderLuz();
+          setTimeout(apagarLuz, 5000);
+        } else if (modo === "secuencia") {
+          secuenciaIntervalo = setInterval(function () {
+            navigator.vibrate([2000, 2000]);
+            encenderLuz();
+            setTimeout(apagarLuz, 2000);
+          }, 4000);
+          navigator.vibrate([2000, 2000]);
+          encenderLuz();
+          setTimeout(apagarLuz, 2000);
+        }
+      } catch (error) {
+        logError("⚠️ Error al iniciar: " + error.message);
+      }
+    }
+/* 3b */
 
     function finalizarVibracion() {
       try {
