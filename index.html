@@ -3,6 +3,83 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prueba de Vibración</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 1em;
+      background: #f4f4f4;
+    }
+    button {
+      display: block;
+      width: 100%;
+      padding: 1em;
+      margin: 1em 0;
+      font-size: 1em;
+      background: #ddd;
+      border: none;
+      border-radius: 5px;
+    }
+    #ventana {
+      border: 1px solid #aaa;
+      padding: 0.5em;
+      min-height: 100px;
+      background: #fff;
+      font-size: 0.9em;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <h2>🔍 Prueba de Vibración</h2>
+
+  <button onclick="probarVibracion()">Probar Vibración (300 ms)</button>
+
+  <h3>Ventana de Mensajes:</h3>
+  <div id="ventana"></div>
+
+  <script>
+    function log(msg) {
+      const ventana = document.getElementById('ventana');
+      const timestamp = new Date().toLocaleTimeString();
+      ventana.textContent += `[${timestamp}] ${msg}\n`;
+      ventana.scrollTop = ventana.scrollHeight;
+    }
+
+    function probarVibracion() {
+      try {
+        const resultado = navigator.vibrate(300);
+        log("navigator.vibrate(300) ejecutado.");
+        alert("El navegador respondió: " + (resultado ? "✅ Vibración aceptada" : "❌ Vibración rechazada"));
+
+        setTimeout(() => {
+          const respuesta = confirm("¿Sentiste la vibración?");
+          if (respuesta) {
+            log("✅ El dispositivo vibró correctamente.");
+            alert("✅ Vibración confirmada por el usuario.");
+          } else {
+            log("❌ No se sintió la vibración.");
+            alert("⚠️ Parece que el dispositivo no vibró.");
+          }
+        }, 500);
+      } catch (e) {
+        log("❌ Error al intentar vibrar: " + e.message);
+        alert("Error: " + e.message);
+      }
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+<!--DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Controlador de Vibración</title>
   <style>
     body {
@@ -293,7 +370,7 @@
 
   </script>
 </body>
-</html>
+</html-->
 
 
 
