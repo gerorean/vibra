@@ -238,7 +238,7 @@
 //5 prueba con pasos de 400/100 milisegundos
     function iniciarVibracion() {
         try {
-          let paso = 400; // vibrar por 400/100 ms cada vez
+          var paso = 400; // vibrar por 400/100 ms cada vez
           var modo = document.getElementById("modo").value;
           resetInterno(); // Limpiar cualquier vibración previa
         
@@ -251,8 +251,8 @@
         
           if (modo === "manual") {
             // Simulación de 10 segundos de vibración con intervalos
-            let tiempoTotal = 10000;
-            let acumulado = 0;
+            var tiempoTotal = 10000;
+            var acumulado = 0;
             encenderLuz();
             secuenciaIntervalo = setInterval(function(){
               if (acumulado >= tiempoTotal) {
@@ -267,8 +267,8 @@
             navigator.vibrate([paso, 100]); // <- ¡Vibración inmediata!
           } else if (modo === "temporizado") {
             // Simulación de 5 segundos de vibración con intervalos
-            let tiempoTotal = 5000;
-            let acumulado = 0;
+            var tiempoTotal = 5000;
+            var acumulado = 0;
             encenderLuz();
             secuenciaIntervalo = setInterval(function(){
               if (acumulado >= tiempoTotal) {
