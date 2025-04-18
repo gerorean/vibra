@@ -235,10 +235,12 @@
     }
 
 /* 5a */
-//5 prueba con pasos de 400/100 milisegundos
+//5 prueba con pasos de x milisegundos
     function iniciarVibracion() {
         try {
-          var paso = 400; // vibrar por 400/100 ms cada vez
+          var peso = 500;
+          var paso = 500; // vibrar por 400/100 ms cada vez
+          var piso = peso - paso;
           var modo = document.getElementById("modo").value;
           resetInterno(); // Limpiar cualquier vibración previa
         
@@ -260,10 +262,10 @@
                 secuenciaIntervalo = null;
                 apagarLuz();
               } else {
-                navigator.vibrate([paso, 100]);
-                acumulado += paso+100;
+                navigator.vibrate([paso, piso]);
+                acumulado += peso;
               }
-            }, paso);
+            }, peso);
             navigator.vibrate([paso, 100]); // <- ¡Vibración inmediata!
           } else if (modo === "temporizado") {
             // Simulación de 5 segundos de vibración con intervalos
@@ -276,11 +278,11 @@
                 secuenciaIntervalo = null;
                 apagarLuz();
               } else {
-                navigator.vibrate([paso, 100]);
-                acumulado += paso+100;
+                navigator.vibrate([paso, piso]);
+                acumulado += peso;
               }
-            }, paso);
-            navigator.vibrate([paso, 100]); // <- ¡Vibración inmediata!
+            }, peso);
+            navigator.vibrate([paso, piso]); // <- ¡Vibración inmediata!
           } else if (modo === "secuencia") {
             // Vibrar 2s, parar 2s, repetir
             secuenciaIntervalo = setInterval(function () {
