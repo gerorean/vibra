@@ -234,6 +234,71 @@
       apagarLuz();
     }
 
+/* 5a */
+//5 prueba con pasos de 400/100 milisegundos
+    function iniciarVibracion() {
+        try {
+          let paso = 400; // vibrar por 400/100 ms cada vez
+          var modo = document.getElementById("modo").value;
+          resetInterno(); // Limpiar cualquier vibración previa
+        
+          var isPC = !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        
+          if (!navigator.vibrate) {
+            logError("❌ Este navegador no soporta la API de vibración.");
+            return;
+          }
+        
+          if (modo === "manual") {
+            // Simulación de 10 segundos de vibración con intervalos
+            let tiempoTotal = 10000;
+            let acumulado = 0;
+            encenderLuz();
+            secuenciaIntervalo = setInterval(function(){
+              if (acumulado >= tiempoTotal) {
+                clearInterval(secuenciaIntervalo);
+                secuenciaIntervalo = null;
+                apagarLuz();
+              } else {
+                navigator.vibrate([paso, 100]);
+                acumulado += paso+100;
+              }
+            }, paso);
+            navigator.vibrate([paso, 100]); // <- ¡Vibración inmediata!
+          } else if (modo === "temporizado") {
+            // Simulación de 5 segundos de vibración con intervalos
+            let tiempoTotal = 5000;
+            let acumulado = 0;
+            encenderLuz();
+            secuenciaIntervalo = setInterval(function(){
+              if (acumulado >= tiempoTotal) {
+                clearInterval(secuenciaIntervalo);
+                secuenciaIntervalo = null;
+                apagarLuz();
+              } else {
+                navigator.vibrate([paso, 100]);
+                acumulado += paso+100;
+              }
+            }, paso);
+            navigator.vibrate([paso, 100]); // <- ¡Vibración inmediata!
+          } else if (modo === "secuencia") {
+            // Vibrar 2s, parar 2s, repetir
+            secuenciaIntervalo = setInterval(function () {
+              navigator.vibrate([2000, 2000]);
+              encenderLuz();
+              setTimeout(apagarLuz, 2000);
+            }, 4000);
+            navigator.vibrate([2000, 2000]); // vibración inmediata
+            encenderLuz();
+            setTimeout(apagarLuz, 2000);
+          }
+        } catch (error) {
+          logError("⚠️ Error al iniciar: " + error.message);
+        }
+      }
+/* 5b */
+
+
 
 /* 4a * /
 //3 prueba con pasos de 500 milisegundos
@@ -300,7 +365,7 @@
       }
 /* 4b */
 
-/* 3a */
+/* 3a * /
 //3    
     function iniciarVibracion() {
       try {
